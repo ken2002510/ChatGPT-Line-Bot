@@ -2,6 +2,7 @@ from typing import Dict
 from collections import defaultdict
 
 
+
 class MemoryInterface:
     def append(self, user_id: str, message: Dict) -> None:
         pass
@@ -19,14 +20,14 @@ class Memory(MemoryInterface):
         self.system_messages = defaultdict(str)
         self.default_system_message = system_message
         self.memory_message_count = memory_message_count
-
+        self.exceldata=""
     def _initialize(self, user_id: str):
         self.storage[user_id] = [{
             'role': 'system', 'content': self.system_messages.get(user_id) or self.default_system_message
         }]
-
     def _drop_message(self, user_id: str):
         if len(self.storage.get(user_id)) >= (self.memory_message_count + 1) * 2 + 1:
+            print("g")
             return [self.storage[user_id][0]] + self.storage[user_id][-(self.memory_message_count * 2):]
         return self.storage.get(user_id)
 
@@ -44,7 +45,17 @@ class Memory(MemoryInterface):
         self._drop_message(user_id)
 
     def get(self, user_id: str) -> str:
-        return self.storage[user_id]
+        if self.exceldata=="":
+          return self.storage[user_id]
+        else:
+          return self.storage[user_id][:1] + self.exceldata + self.storage[user_id][1:]
+        
 
     def remove(self, user_id: str) -> None:
         self.storage[user_id] = []
+    def excel_data(self, user_id, excel_message) :
+        self.storage[user_id]=[]
+        self.exceldata=[{
+            'role': "assistant",
+            'content': excel_message
+          }]
