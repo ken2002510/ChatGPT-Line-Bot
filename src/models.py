@@ -44,6 +44,7 @@ class OpenAIModel(ModelInterface):
 
     def chat_completions(self, messages, model_engine) -> str:
         json_body = {
+            'temperature': 0,
             'model': model_engine,
             'messages': messages
         }
