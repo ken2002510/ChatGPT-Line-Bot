@@ -22,7 +22,6 @@ from src.utils import get_role_and_content
 from src.service.youtube import Youtube, YoutubeTranscriptReader
 from src.service.website import Website, WebsiteReader
 from src.mongodb import mongodb
-from src.assistant import chance
 from src.read_excel import find_next_row_by_first_row_value
 
 load_dotenv('.env')
@@ -189,25 +188,6 @@ STEP4.
     elif text.startswith('/清除'):
       memory.remove(user_id)
       msg = TextSendMessage(text='歷史訊息清除成功')
-
-    elif text.startswith('/型號'):
-      user_model = model_management[user_id]
-      prompt = text[3:].strip()
-      parts = prompt.split('/')
-      model_number = parts[0]  # '型號ABC123'
-      question = parts[1]  # '這是一個問題'
-      print(memory.get(user_id))
-      memory.append(user_id, 'assistant', str(chance(model_number)))
-      memory.append(user_id, 'user', question)
-      print(memory.get(user_id))
-      is_successful, response, error_message = user_model.chat_completions(
-        memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
-      if not is_successful:
-        raise Exception(error_message)
-
-      role, response = get_role_and_content(response)
-      msg = TextSendMessage(text=response)
-      memory.append(user_id, role, response)
     else:
       user_model = model_management[user_id]
       memory.append(user_id, 'user', text)
