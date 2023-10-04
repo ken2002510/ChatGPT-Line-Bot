@@ -193,31 +193,7 @@ STEP4.
       memory.append(user_id, 'user', text)
       url = website.get_url_from_text(text)
       if url:
-        if youtube.retrieve_video_id(text):
-          is_successful, chunks, error_message = youtube.get_transcript_chunks(
-            youtube.retrieve_video_id(text))
-          if not is_successful:
-            raise Exception(error_message)
-          youtube_transcript_reader = YoutubeTranscriptReader(
-            user_model, os.getenv('OPENAI_MODEL_ENGINE'))
-          is_successful, response, error_message = youtube_transcript_reader.summarize(
-            chunks)
-          if not is_successful:
-            raise Exception(error_message)
-          role, response = get_role_and_content(response)
-          msg = TextSendMessage(text=response)
-        else:
-          chunks = website.get_content_from_url(url)
-          if len(chunks) == 0:
-            raise Exception('無法撈取此網站文字')
-          website_reader = WebsiteReader(user_model,
-                                         os.getenv('OPENAI_MODEL_ENGINE'))
-          is_successful, response, error_message = website_reader.summarize(
-            chunks)
-          if not is_successful:
-            raise Exception(error_message)
-          role, response = get_role_and_content(response)
-          msg = TextSendMessage(text=response)
+        msg = TextSendMessage(text="this is url")
       else:
         name = storage2.load().get(user_id)
         response_msg = write_content(name, text)
